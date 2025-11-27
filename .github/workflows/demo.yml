@@ -1,10 +1,10 @@
-name: CI
+name: Python CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -14,14 +14,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run a one-line script
-        run: echo SJBIT
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-      - name: Run a multi-line script
+      - name: Install dependencies
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run Python script
-        run: python3 app.py
+      - name: Run Python application
+        run: |
+          python app.py > output.txt
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-output
+          path: output.txt
+
 
